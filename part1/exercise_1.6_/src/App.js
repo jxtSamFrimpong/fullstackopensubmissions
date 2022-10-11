@@ -31,6 +31,22 @@ const CounterblesGen = ({ feedback }) => {
   </div>);
 }
 
+const Average = ({ feedback }) => {
+  let average = (feedback.good.amount - feedback.bad.amount) / (feedback.good.amount + feedback.neutral.amount + feedback.bad.amount)
+  return (
+    <p>average {average}</p>);
+}
+
+const All = ({ all }) => {
+  return (<div>all {all}</div>);
+}
+
+const Positive = ({ feedback }) => {
+  let positive = (feedback.good.amount / (feedback.good.amount + feedback.neutral.amount + feedback.bad.amount))
+  return (<p>positive {positive * 100} %</p>)
+}
+
+
 const App = () => {
   const [headertext, stats] = ['give feedback', 'statistics']
   const [feedback, setFeedback] = useState({
@@ -50,21 +66,15 @@ const App = () => {
 
   const handleFeedback = (name) => {
     if (name.toString() === 'good') {
-      // let newVal = feedbackAmounts
-      // newVal.good += 1
       setFeedback({ ...feedback, good: { ...feedback.good, amount: feedback.good.amount += 1 } })
       console.log('updated good', feedback.good)
     }
     else if (name.toString() === 'bad') {
-      // let newVal = feedbackAmounts
-      // newVal.bad += 1
       setFeedback({ ...feedback, bad: { ...feedback.bad, amount: feedback.bad.amount += 1 } })
       console.log('updated bad', feedback.bad)
 
     }
     else if (name.toString() === 'neutral') {
-      // let newVal = feedbackAmounts
-      // newVal.neutral += 1
       setFeedback({ ...feedback, neutral: { ...feedback.neutral, amount: feedback.neutral.amount += 1 } })
       console.log('updated neutral', feedback.neutral)
     }
@@ -83,6 +93,9 @@ const App = () => {
       </span>
       <Header headertext={stats} />
       <CounterblesGen feedback={feedback} />
+      {/* <All all={feedback.good.amount + feedback.neutral.amount + feedback.bad.amount} />
+      <Average feedback={feedback} />
+      <Positive feedback={feedback} /> */}
     </div>
   );
 }
