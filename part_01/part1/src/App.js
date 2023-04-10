@@ -1,28 +1,15 @@
-const Hello = ({ name, age }) => {
-    //console.log(props)
-    const bornYear = () => new Date().getFullYear() - age
-
-    return (
-        <div>
-            <p>Hello {name}, you were born in {bornYear()}</p>
-        </div>
-    )
-}
+import { useState } from 'react'
 
 const App = () => {
-    // let date_now = new Date().toISOString();
-    const sam = 15;
-    const odd = 19;
-    // console.log(date_now, a, b, a + b)
-    // const friends = ['perter', 'maya']
+    const [counter, setNumber] = useState(0)
+
+    setTimeout(
+        () => setNumber(Math.floor(Math.random() * 10)),
+        1000
+    )
     return (
-        <div>
-            <h1>Greeting</h1>
-            <Hello name='Sammy' age={sam} />
-            <Hello name='Odiawuo' age={odd} />
-            {/* <p>{friends}</p> */}
-        </div>
+        <div>{counter}</div>
     )
 }
 
-export default App                                      
+export default App
