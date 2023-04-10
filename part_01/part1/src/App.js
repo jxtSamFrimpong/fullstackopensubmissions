@@ -1,24 +1,26 @@
-const Hello = (props) => {
-    console.log(props)
+const Hello = ({ name, age }) => {
+    //console.log(props)
+    const bornYear = () => new Date().getFullYear() - age
+
     return (
         <div>
-            <p>Hello {props.name}, you are {props.age} years old</p>
+            <p>Hello {name}, you were born in {bornYear()}</p>
         </div>
     )
 }
 
 const App = () => {
     // let date_now = new Date().toISOString();
-    // const a = 5;
-    // const b = 19;
+    const sam = 15;
+    const odd = 19;
     // console.log(date_now, a, b, a + b)
-    const friends = ['perter', 'maya']
+    // const friends = ['perter', 'maya']
     return (
         <div>
             <h1>Greeting</h1>
-            <Hello name='Sammy' age='16' />
-            <Hello name='Odiawuo' age='idk' />
-            <p>{friends}</p>
+            <Hello name='Sammy' age={sam} />
+            <Hello name='Odiawuo' age={odd} />
+            {/* <p>{friends}</p> */}
         </div>
     )
 }
