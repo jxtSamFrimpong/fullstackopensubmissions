@@ -14,25 +14,37 @@ const Button = ({ displayText, handler }) => {
 
 const StatisticLine = ({ displayText, count }) => {
   return (
-    <p>{displayText} {count}</p>
+    <tr>
+      <td>{displayText}</td>
+      <td>{count}</td>
+    </tr>
   )
 }
 
 const AllFeed = ({ displayText, feed }) => {
   return (
-    <p>{displayText} {feed.good + feed.bad + feed.neutral}</p>
+    <tr>
+      <td>{displayText}</td>
+      <td>{feed.good + feed.bad + feed.neutral}</td>
+    </tr>
   )
 }
 
 const AvgFeed = ({ displayText, feed }) => {
   return (
-    <p>{displayText} {((feed.good - feed.bad) / (feed.good + feed.bad + feed.neutral)).toFixed(3)}</p>
+    <tr>
+      <td>{displayText}</td>
+      <td>{((feed.good - feed.bad) / (feed.good + feed.bad + feed.neutral)).toFixed(3)}</td>
+    </tr>
   )
 }
 
 const PosFeed = ({ displayText, feed }) => {
   return (
-    <p>{displayText} {(((feed.good) / (feed.good + feed.neutral + feed.bad)) * 100).toFixed(2)} %</p>
+    <tr>
+      <td>{displayText}</td>
+      <td>{(((feed.good) / (feed.good + feed.neutral + feed.bad)) * 100).toFixed(2)} %</td>
+    </tr>
   )
 }
 
@@ -44,12 +56,16 @@ const Statistics = ({ feed }) => {
   }
   return (
     <div>
-      <StatisticLine displayText={'good'} count={feed.good} />
-      <StatisticLine displayText={'neutral'} count={feed.neutral} />
-      <StatisticLine displayText={'bad'} count={feed.bad} />
-      <AllFeed displayText={'all'} feed={feed} />
-      <AvgFeed displayText={'average'} feed={feed} />
-      <PosFeed displayText={'positive'} feed={feed} />
+      <table>
+        <tbody>
+          <StatisticLine displayText={'good'} count={feed.good} />
+          <StatisticLine displayText={'neutral'} count={feed.neutral} />
+          <StatisticLine displayText={'bad'} count={feed.bad} />
+          <AllFeed displayText={'all'} feed={feed} />
+          <AvgFeed displayText={'average'} feed={feed} />
+          <PosFeed displayText={'positive'} feed={feed} />
+        </tbody>
+      </table>
     </div>
   )
 }
