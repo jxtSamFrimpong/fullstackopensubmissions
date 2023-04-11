@@ -1,5 +1,11 @@
 import { useState } from 'react'
 
+const Button = ({ handleClick, text }) => (
+  <button onClick={handleClick}>
+    {text}
+  </button>
+)
+
 const History = ({allClicks, total}) => {
     if (allClicks.length === 0){
         return (
@@ -65,12 +71,8 @@ const App = () => {
         <div>
         <div>
             {clicks.left}
-            <button onClick={() => handleLeftClick()}>
-                left
-            </button>
-            <button onClick={() => handleRightClick()}>
-                right
-            </button>
+            <Button text='left' handleClick={handleLeftClick} />
+            <Button text='right' handleClick={handleRightClick} />
             {clicks.right}
         </div>
         <br/>
