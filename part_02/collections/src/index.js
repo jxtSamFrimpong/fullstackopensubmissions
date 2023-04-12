@@ -28,4 +28,4 @@ root.render(
   </React.StrictMode>
 );
 
-console.log('notes inside index after rendering', notes);
+// console.log('notes inside index after rendering', notes);

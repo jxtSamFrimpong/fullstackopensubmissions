@@ -7,6 +7,8 @@ const App = (props) => {
   const [newNote, setNewNote] = useState(
     'a new note...'
   )
+  const [showAll, setShowAll] = useState(true)
+  const [toggleValue, settoggleValue] = useState(false)
   console.log('notes inside app before returning to index for rendering', notes);
 
   const addNote = (event) => {
@@ -30,14 +32,30 @@ const App = (props) => {
     setNewNote(event.target.value)
   }
 
+  const handleTogglevalue = (event) => {
+    console.log(event.target.value)
+    //console.log(typeof (event.target.value))
+    const newVal = !toggleValue
+    console.log(newVal);
+    settoggleValue(newVal)
+    setShowAll(!newVal)
+  }
+
+  const noteToShow = showAll
+    ? notes
+    : notes.filter((note) => note.important)
+
   return (
     <div>
       <h1>Notes</h1>
+      <label>Show Only Important
+        <input type="checkbox" checked={toggleValue} onChange={handleTogglevalue} />
+      </label>
       <ul>
         {/* <li>{notes[0].content}</li>
         <li>{notes[1].content}</li>
         <li>{notes[2].content}</li> */}
-        {notes.map((note) => <Note key={note.id} content={note.content} />)}
+        {noteToShow.map((note) => <Note key={note.id} content={note.content} />)}
       </ul>
       <form onSubmit={addNote}>
         <input
