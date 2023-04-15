@@ -45,6 +45,7 @@ const App = () => {
       ]
     }
   ]
+  console.log('clog print', courses.map((i) => i.id));
   return (
     <div>
       {courses.map((course) => {

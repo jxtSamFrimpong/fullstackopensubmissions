@@ -1,19 +1,40 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
+import axios from 'axios'
 import Persons from './components/persons'
 import PersonForm from './components/personsForm'
 import FilterSearch from './components/filterSearch'
 
 const App = () => {
-    const [persons, setPersons] = useState([
-        { name: 'Arto Hellas', number: '040-123456', id: 1 },
-        { name: 'Ada Lovelace', number: '39-44-5323523', id: 2 },
-        { name: 'Dan Abramov', number: '12-43-234345', id: 3 },
-        { name: 'Mary Poppendieck', number: '39-23-6423122', id: 4 }
-    ])
+    // [
+    //     { name: 'Arto Hellas', number: '040-123456', id: 1 },
+    //     { name: 'Ada Lovelace', number: '39-44-5323523', id: 2 },
+    //     { name: 'Dan Abramov', number: '12-43-234345', id: 3 },
+    //     { name: 'Mary Poppendieck', number: '39-23-6423122', id: 4 }
+    // ]
+    const handleFetch = () => {
+        axios.get('http://localhost:3001/persons').then((response) => {
+            console.log('fetched data from json-server', response.data)
+            const persons = response.data
+            const search_term = search
+            setPersons(persons)
+            setSearchedPersons(
+                persons.filter(e => e.name.toLocaleLowerCase().search(
+                    search.length > 0 ? search.toLocaleLowerCase() : ''
+                ) >= 0
+                )
+            )
+        }).catch((reason) => {
+            console.log('reason for failed fetch', reason)
+        })
+    }
+
+    const [persons, setPersons] = useState([])
     const [newName, setNewName] = useState('')
     const [newNumber, setNewNumber] = useState('')
     const [search, setSearch] = useState('')
     const [searchedPersons, setSearchedPersons] = useState(persons)
+
+    useEffect(handleFetch, [])
 
     const handleTyping = (event) => {
         //event.preventDefault())
