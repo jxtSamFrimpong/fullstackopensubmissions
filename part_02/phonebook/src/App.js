@@ -3,6 +3,8 @@ import axios from 'axios'
 import Persons from './components/persons'
 import PersonForm from './components/personsForm'
 import FilterSearch from './components/filterSearch'
+import PersonResources from './services/persons'
+import Notif from './components/Notif'
 
 const App = () => {
     // [
@@ -12,20 +14,21 @@ const App = () => {
     //     { name: 'Mary Poppendieck', number: '39-23-6423122', id: 4 }
     // ]
     const handleFetch = () => {
-        axios.get('http://localhost:3001/persons').then((response) => {
-            console.log('fetched data from json-server', response.data)
-            const persons = response.data
-            const search_term = search
-            setPersons(persons)
-            setSearchedPersons(
-                persons.filter(e => e.name.toLocaleLowerCase().search(
-                    search.length > 0 ? search.toLocaleLowerCase() : ''
-                ) >= 0
+        axios.get('http://localhost:3001/persons')
+            .then((response) => {
+                console.log('fetched data from json-server', response.data)
+                const persons = response.data
+                //const search_term = search
+                setPersons(persons)
+                setSearchedPersons(
+                    persons.filter(e => e.name.toLocaleLowerCase().search(
+                        search.length > 0 ? search.toLocaleLowerCase() : ''
+                    ) >= 0
+                    )
                 )
-            )
-        }).catch((reason) => {
-            console.log('reason for failed fetch', reason)
-        })
+            }).catch((reason) => {
+                console.log('reason for failed fetch', reason)
+            })
     }
 
     const [persons, setPersons] = useState([])
@@ -33,6 +36,8 @@ const App = () => {
     const [newNumber, setNewNumber] = useState('')
     const [search, setSearch] = useState('')
     const [searchedPersons, setSearchedPersons] = useState(persons)
+    const [notifMessage, setNotifMesage] = useState(null)
+    const [messageClass, setMesageClass] = useState('')
 
     useEffect(handleFetch, [])
 
@@ -61,39 +66,80 @@ const App = () => {
         event.preventDefault()
         console.log('handling a submit event from ... ', event.target)
         if (persons.filter((el) => el.name === newName).length > 0) {
-            alert(`hey, the person you're trying to add, ${newName} is already in the phonebook`)
+            //alert(`hey, the person you're trying to add, ${newName} is already in the phonebook`)
+            console.log('trying to update contact');
+            if (window.confirm(`${newName} already exists, do you want to update the number?`)) {
+                const new_obj = {
+                    name: newName,
+                    number: newNumber
+                }
+                const id_num = persons.find(el => el.name === newName).id;
+                console.log('id_num', id_num);
+                PersonResources
+                    .updatePerson(id_num, new_obj, setNotifMesage, setMesageClass)
+                    .then(data => {
+                        const persons_ = persons
+                        const updatedPersons = persons_.map(n => n.id !== id_num ? n : data)
+                        console.log('updaed persons', updatedPersons)
+                        setPersons(updatedPersons);
+                        setSearchedPersons(updatedPersons.filter(e => e.name.toLocaleLowerCase().search(search.length > 0 ? search.toLocaleLowerCase() : '') >= 0));
+                        setNewName('')
+                        setNewNumber('')
+                    })
+            } else {
+                console.log('my bad, dont wanna update the person');
+            }
         }
         else if (persons.filter((el) => el.number === newNumber).length > 0) {
-            alert(`hey, the number you're trying to add, ${newNumber} is already owned by another person`)
+            //alert(`hey, the number you're trying to add, ${newNumber} is already owned by another person`)
+            setNotifMesage(`hey, the number you're trying to add, ${newNumber} is already owned by another person`);
+            setMesageClass('already')
+            setTimeout(() => {
+                setNotifMesage(null);
+            }, 5000)
         }
 
         else {
             console.log('good job, no duplicates')
             const persons_ = persons
-            const new_persons = persons_.concat([
-                {
+            PersonResources
+                .addPerson({
                     name: newName,
-                    number: newNumber,
-                    id: [...persons_].pop().id + 1
-                }
-            ])
-            setPersons(new_persons)
-            setNewName('')
-            setNewNumber('')
-            console.log(typeof (search), search, new_persons.filter(e => e.name.toLocaleLowerCase().search(search.length > 0 ? search : '') >= 0))
-            setSearchedPersons(new_persons.filter(e => e.name.toLocaleLowerCase().search(search.length > 0 ? search.toLocaleLowerCase() : '') >= 0))
+                    number: newNumber
+                }, setNotifMesage, setMesageClass)
+                .then(data => {
+                    setPersons(persons_.concat(data));
+                    setNewName('');
+                    setNewNumber('');
+                    setSearchedPersons(persons_.concat(data).filter(e => e.name.toLocaleLowerCase().search(search.length > 0 ? search.toLocaleLowerCase() : '') >= 0))
+
+                })
         }
+    }
+
+    const deletePersonInUI = (id) => {
+        const persons_ = persons
+        setPersons(persons_.filter(n => n.id !== id));
+        setSearchedPersons(persons_.filter(n => n.id !== id)
+            .filter(e =>
+                e.name.toLocaleLowerCase()
+                    .search(search.length > 0
+                        ? search.toLocaleLowerCase()
+                        : ''
+                    ) >= 0)
+        );
     }
 
 
     return (
         <div>
             <h2>Phonebook</h2>
+            <Notif message={notifMessage} class_={messageClass} />
             <FilterSearch search={search} handleSearch={handleSearch} />
             <PersonForm handleSubmit={handleSubmit} handleTyping={handleTyping} handleTypingNumbers={handleTypingNumbers} newName={newName} newNumber={newNumber} />
             <h2>Numbers</h2>
             <div>
-                <Persons contacts={searchedPersons} />
+                <Persons contacts={searchedPersons} deleteInUI={deletePersonInUI} setMessage={setNotifMesage} setMessageClass={setMesageClass} />
             </div>
         </div>
     )
