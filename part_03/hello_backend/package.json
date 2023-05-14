@@ -1,0 +1,39 @@
+{
+  "name": "backend",
+  "version": "0.0.1",
+  "description": "A Hello world node backend",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "dev": "nodemon index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jxtSamFrimpong/fullstackopensubmissions.git"
+  },
+  "keywords": [
+    "Node",
+    "API",
+    "REST",
+    "Backend",
+    "Javascript",
+    "Requests",
+    "Response",
+    "Async",
+    "Await"
+  ],
+  "author": "Samuel Frimpong",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/jxtSamFrimpong/fullstackopensubmissions/issues"
+  },
+  "homepage": "https://github.com/jxtSamFrimpong/fullstackopensubmissions#readme",
+  "dependencies": {
+    "dotenv": "^16.0.3",
+    "express": "^4.18.2"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.22"
+  }
+}
