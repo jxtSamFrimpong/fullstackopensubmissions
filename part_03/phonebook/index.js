@@ -1,6 +1,7 @@
 const express = require('express');
 const dotenv = require('dotenv');
 const morgan = require('morgan');
+const cors = require('cors');
 
 dotenv.config();
 const PORT = process.env.PORT;
@@ -12,7 +13,7 @@ const requestLogger = (request, response, next) => {
     console.log('---')
     next()
 }
-const unknownEndpoint = (request, response) => {
+const unknownEndpoint = (request, response, next) => {
     response.status(404).send({ error: 'unknown endpoint' });
     next()
 }
@@ -25,8 +26,10 @@ const logHeaders = (request, response, next) => {
 
 const app = express();
 app.use(express.json())
+app.use(express.static('build'))
 app.use(requestLogger);
 app.use(logHeaders);
+app.use(cors())
 
 morgan.token('reqBody', (req) => JSON.stringify(req.body));
 customMorganFormat = ':method :url :status :res[content-length] - :response-time ms :reqBody'
@@ -87,6 +90,10 @@ app.get('/api/persons/:id', (req, res) => {
 
 app.delete('/api/persons/:id', (req, res) => {
     const id = Number(req.params.id);
+    const idExists = persons.map(p => p.id).includes(id)
+    if (!idExists) {
+        return res.sendStatus(204);
+    }
     persons = persons.filter(person => person.id !== id);
     res.status(204).end();
 });
@@ -97,15 +104,11 @@ app.post('/api/persons', (req, res) => {
         reqBody.number === null ||
         reqBody.number === '') {
         res.statusCode = 400;
-        return res.json({
-            error: 'number field cannot be empty'
-        });//.send('Number field cannot be empty');
+        return res.end()
+        //.send('Number field cannot be empty');
     }
     if (persons.find(p => p.name === reqBody.name) !== undefined) {
-        res.statusCode = 409
-        return res.json({
-            error: 'name already in use'
-        });
+        return res.sendStatus(409);
     }
     const pushBody = {
         id: genRandIndex(),
@@ -114,9 +117,26 @@ app.post('/api/persons', (req, res) => {
     }
     persons.push(pushBody);
     res.statusCode = 201;
-    res.send(`${pushBody.id}`);
+    res.json(pushBody);
 
 });
+
+app.put('/api/persons/:id', (req, res) => {
+    const id = Number(req.params.id)
+    const reqBody = req.body
+    const idExists = persons.map(p => p.id).includes(id)
+    if (!idExists) {
+        res.statusCode = 400;
+        return res.end;
+    }
+    const newPersonsBody = persons.map(p => {
+        return p.id !== id
+            ? p
+            : { id, ...reqBody }
+    })
+    persons = newPersonsBody
+    res.json({ id, ...reqBody })
+})
 
 app.get('/info', (req, res) => {
     const localTime = new Date();
@@ -127,5 +147,5 @@ app.get('/info', (req, res) => {
 app.use(unknownEndpoint);
 
 app.listen(PORT, () => {
-    console.log('listening ...');
+    console.log('listening ... on ', PORT);
 });

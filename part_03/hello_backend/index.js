@@ -1,5 +1,6 @@
 const express = require('express');
 const dotenv = require('dotenv');
+const cors = require('cors');
 
 dotenv.config();
 
@@ -30,6 +31,8 @@ const newestID = () => {
 
 const app = express()
 app.use(express.json())
+app.use(express.static('build'))
+app.use(cors())
 
 app.get('/', (req, res) => {
     res.send('<h1>Hello pun</h1>');
@@ -54,7 +57,7 @@ app.post('/api/notes', (req, res) => {
             important: note.important || false
         }
         notes.push(noteToAdd);
-        res.sendStatus(201);
+        res.status(201).json(noteToAdd);
         //res.send(`${notes[notes.length - 1].id}`);
     }
     else {
@@ -89,7 +92,33 @@ app.delete('/api/notes/:id', (req, res) => {
     }
 });
 
-const PORT = process.env.PORT;
+app.put('/api/notes/:id', (req, res) => {
+    const id = Number(req.params.id);
+    const reqBody = req.body;
+    console.log('reqBody', reqBody);
+    if (reqBody.content !== undefined
+        && reqBody.content !== null
+        && reqBody.content !== ''
+        && notes.find(n => n.id === id)) {
+        let newNotes = [...notes].map(note => {
+            // console.log('values', Object.values(note));
+            // console.log('values boolean', Object.values(note).includes(id));
+            // console.log('{ ...reqBody, id }', { ...reqBody, id });
+            return Object.values(note).includes(id)
+                ? { ...reqBody, id }
+                : note
+        })
+        //console.log("OK", newNotes);
+        notes = newNotes;
+        res.json(notes.find(n => n.id === id));
+    }
+    else {
+        //console.log("ALARM");
+        res.sendStatus(400);
+    }
+})
+
+const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => {
     console.log(`server is running on ${PORT}`);
 });

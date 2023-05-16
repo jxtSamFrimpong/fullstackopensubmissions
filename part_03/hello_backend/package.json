@@ -6,7 +6,11 @@
   "scripts": {
     "start": "node index.js",
     "dev": "nodemon index.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build:ui":"rm -rf build && cd ../../part_02/collections && npm run build && cp -rf build ../../part_03/hello_backend",
+    "deploy":"fly deploy",
+    "deploy:full":"npm run build:ui && npm run deploy",
+    "logs:prod":"fly logs"
   },
   "repository": {
     "type": "git",
@@ -30,6 +34,7 @@
   },
   "homepage": "https://github.com/jxtSamFrimpong/fullstackopensubmissions#readme",
   "dependencies": {
+    "cors": "^2.8.5",
     "dotenv": "^16.0.3",
     "express": "^4.18.2"
   },

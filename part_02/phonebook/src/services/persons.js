@@ -1,6 +1,24 @@
 import axios from "axios";
 
-const baseURL = 'http://localhost:3001/persons';
+const baseURL = '/api/persons';
+
+const handleFetch = (setPersons, setSearchedPersons, search) => {
+    axios.get(`${baseURL}`)
+        .then((response) => {
+            console.log('fetched data from json-server', response.data)
+            const persons = response.data
+            //const search_term = search
+            setPersons(persons)
+            setSearchedPersons(
+                persons.filter(e => e.name.toLocaleLowerCase().search(
+                    search.length > 0 ? search.toLocaleLowerCase() : ''
+                ) >= 0
+                )
+            )
+        }).catch((reason) => {
+            console.log('reason for failed fetch', reason)
+        })
+}
 
 const addPerson = (new_person, setMessage, setMesageClass) => {
     const request = axios.post(baseURL, new_person)
@@ -24,7 +42,7 @@ const addPerson = (new_person, setMessage, setMesageClass) => {
 const deletePerson = (id, name, setMessage, setMesageClass) => {
     const request = axios.delete(`${baseURL}/${id}`)
     return request.then((response) => {
-        if (response.status === 200) {
+        if (response.status === 204) {
             setMesageClass('added')
             setMessage(`Deleted ${name} succesfully`)
             setTimeout(() => {
@@ -67,6 +85,6 @@ const updatePerson = (id, updatedPerson, setMessage, setMesageClass) => {
         })
 }
 
-const PersonResources = { addPerson, deletePerson, updatePerson };
+const PersonResources = { addPerson, deletePerson, updatePerson, handleFetch };
 
 export default PersonResources;

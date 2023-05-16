@@ -24,7 +24,7 @@ const App = (props) => {
   const postNoteToServer = (new_note) => {
     noteService.create(new_note, [...notes], setAddedNotifMessage, setAddedClass)
       .then((response) => {
-        console.log('response returned after posting new note to server', response.data)
+        console.log('response returned after posting new note to server', response)
         setNotes(response)
       }).catch((reason) => {
         console.log('what went wrong', reason)

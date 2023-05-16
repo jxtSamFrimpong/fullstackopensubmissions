@@ -8,7 +8,7 @@ const Persons = ({ contacts, deleteInUI, setMessage, setMessageClass }) => {
             PersonResources
                 .deletePerson(id, name, setMessage, setMessageClass)
                 .then(response => {
-                    if (response.status === 200) {
+                    if (response.status === 204) {
                         deleteInUI(id)
                     }
                 });
