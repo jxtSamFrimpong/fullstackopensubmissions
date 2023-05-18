@@ -72,6 +72,7 @@ const updatePerson = (id, updatedPerson, setMessage, setMesageClass) => {
             setTimeout(() => {
                 setMessage(null);
             }, 5000)
+            console.log('likely updated data', response.data);
             return response.data;
         })
         .catch(err => {

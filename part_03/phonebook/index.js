@@ -1,28 +1,12 @@
 const express = require('express');
-const dotenv = require('dotenv');
+require('dotenv').config();
 const morgan = require('morgan');
 const cors = require('cors');
+const people = require('./models/people');
+const { errorHandler, unknownEndpoint } = require('./middlewares/errorhandler')
+const { requestLogger, logHeaders } = require('./middlewares/logging')
 
-dotenv.config();
 const PORT = process.env.PORT;
-
-const requestLogger = (request, response, next) => {
-    console.log('Method:', request.method)
-    console.log('Path:  ', request.path)
-    console.log('Body:  ', request.body)
-    console.log('---')
-    next()
-}
-const unknownEndpoint = (request, response, next) => {
-    response.status(404).send({ error: 'unknown endpoint' });
-    next()
-}
-
-const logHeaders = (request, response, next) => {
-    console.log('Headers', request.headers);
-    console.log('---');
-    next()
-}
 
 const app = express();
 app.use(express.json())
@@ -36,115 +20,97 @@ customMorganFormat = ':method :url :status :res[content-length] - :response-time
 app.use(morgan(customMorganFormat));
 
 
-let persons = [
-    {
-        "id": 1,
-        "name": "Arto Hellas",
-        "number": "040-123456"
-    },
-    {
-        "id": 2,
-        "name": "Ada Lovelace",
-        "number": "39-44-5323523"
-    },
-    {
-        "id": 3,
-        "name": "Dan Abramov",
-        "number": "12-43-234345"
-    },
-    {
-        "id": 4,
-        "name": "Mary Poppendieck",
-        "number": "39-23-6423122"
-    }
-];
-
-
-const genRandIndex = () => {
-    let someNum = Math.ceil(Math.random() * 1000);
-    if (persons.map(p => p.id).find(i => i === someNum) !== undefined) {
-        console.log(someNum);
-        someNum = genRandIndex();
-    }
-    return someNum;
-}
-
 app.get('/', (req, res) => {
     res.send('<html><em>Phonebook</em></html>');
 })
 
 app.get('/api/persons', (req, res) => {
-    res.json(persons);
+    people.find({})
+        .then(person => {
+            console.log(person);
+            res.json(person)
+        })
+        .catch((err) => {
+            console.log(err);
+            res.status(500).json({ error: `${err}` })
+        })
 });
 
-app.get('/api/persons/:id', (req, res) => {
-    const id = Number(req.params.id);
-    const person = persons.find(p => p.id === id);
-    if (person !== undefined) {
-        res.json(person);
-    }
-    else {
-        res.status(404).end();
-    }
+app.get('/api/persons/:id', (req, res, next) => {
+    const { id } = req.params
+
+    people.findById(id)
+        .then(person => {
+            console.log(person);
+            if (person) {
+                res.json(person)
+            }
+            else {
+                res.sendStatus(404)
+            }
+        })
+        .catch((err) => {
+            console.log(err);
+            return next(err)
+        })
 });
 
-app.delete('/api/persons/:id', (req, res) => {
-    const id = Number(req.params.id);
-    const idExists = persons.map(p => p.id).includes(id)
-    if (!idExists) {
-        return res.sendStatus(204);
-    }
-    persons = persons.filter(person => person.id !== id);
-    res.status(204).end();
+app.delete('/api/persons/:id', (req, res, next) => {
+    const { id } = req.params;
+
+    people.findByIdAndDelete(id)
+        .then(results => {
+            res.status(204).end()
+        })
+        .catch(err => {
+            return next(err)
+        })
 });
 
 app.post('/api/persons', (req, res) => {
-    const reqBody = req.body;
-    if (reqBody.number === undefined ||
-        reqBody.number === null ||
-        reqBody.number === '') {
+    const { number, name } = req.body;
+    if (number === undefined ||
+        number === null ||
+        number === '') {
         res.statusCode = 400;
         return res.end()
-        //.send('Number field cannot be empty');
     }
-    if (persons.find(p => p.name === reqBody.name) !== undefined) {
-        return res.sendStatus(409);
-    }
-    const pushBody = {
-        id: genRandIndex(),
-        name: reqBody.name,
-        number: reqBody.number,
-    }
-    persons.push(pushBody);
-    res.statusCode = 201;
-    res.json(pushBody);
+    const person = new people({ name, number })
+    person.save()
+        .then(person => res.status(201).json(person))
+        .catch(e => {
+            console.log('post /api/persons', e);
+            res.status(500).end()
+        })
 
 });
 
 app.put('/api/persons/:id', (req, res) => {
-    const id = Number(req.params.id)
-    const reqBody = req.body
-    const idExists = persons.map(p => p.id).includes(id)
-    if (!idExists) {
-        res.statusCode = 400;
-        return res.end;
-    }
-    const newPersonsBody = persons.map(p => {
-        return p.id !== id
-            ? p
-            : { id, ...reqBody }
-    })
-    persons = newPersonsBody
-    res.json({ id, ...reqBody })
+    const { id } = req.params;
+    const { name, number } = req.body;
+    people.findByIdAndUpdate(id, { name, number }, { new: true })
+        .then(result => {
+            console.log('put /api/persons', result);
+            return res.json(result)
+        })
+        .catch(e => {
+            console.log('put /api/persons/:id', e);
+            res.sendStatus(500);
+        });
 })
 
 app.get('/info', (req, res) => {
-    const localTime = new Date();
-    whatToReturn = `Phonebook has information for ${persons.length} people\n${localTime}`;
-    res.send(whatToReturn);
+    people.find({})
+        .then(persons => {
+            const localTime = new Date();
+            whatToReturn = `Phonebook has information for ${persons.length} people\n${localTime}`;
+            res.send(whatToReturn);
+        })
+
 });
 
 app.use(unknownEndpoint);
+app.use(errorHandler);
 
 app.listen(PORT, () => {
     console.log('listening ... on ', PORT);

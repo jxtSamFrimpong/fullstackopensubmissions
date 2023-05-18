@@ -7,10 +7,10 @@
     "start": "node index.js",
     "dev": "nodemon index.js",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build:ui":"rm -rf build && cd ../../part_02/collections && npm run build && cp -rf build ../../part_03/hello_backend",
-    "deploy":"fly deploy",
-    "deploy:full":"npm run build:ui && npm run deploy",
-    "logs:prod":"fly logs"
+    "build:ui": "rm -rf build && cd ../../part_02/collections && npm run build && cp -rf build ../../part_03/hello_backend",
+    "deploy": "fly deploy",
+    "deploy:full": "npm run build:ui && npm run deploy",
+    "logs:prod": "fly logs"
   },
   "repository": {
     "type": "git",
@@ -36,7 +36,9 @@
   "dependencies": {
     "cors": "^2.8.5",
     "dotenv": "^16.0.3",
-    "express": "^4.18.2"
+    "express": "^4.18.2",
+    "mongodb": "^5.5.0",
+    "mongoose": "^7.1.1"
   },
   "devDependencies": {
     "nodemon": "^2.0.22"
