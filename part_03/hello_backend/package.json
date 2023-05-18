@@ -10,7 +10,9 @@
     "build:ui": "rm -rf build && cd ../../part_02/collections && npm run build && cp -rf build ../../part_03/hello_backend",
     "deploy": "fly deploy",
     "deploy:full": "npm run build:ui && npm run deploy",
-    "logs:prod": "fly logs"
+    "logs:prod": "fly logs",
+    "lint:init": "npx eslint --init",
+    "lint": "npx eslint ."
   },
   "repository": {
     "type": "git",
@@ -41,6 +43,7 @@
     "mongoose": "^7.1.1"
   },
   "devDependencies": {
+    "eslint": "^8.40.0",
     "nodemon": "^2.0.22"
   }
 }

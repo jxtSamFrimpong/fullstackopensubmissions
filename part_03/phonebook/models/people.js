@@ -15,8 +15,21 @@ mongoose.connect(url)
     })
 
 const Person = new mongoose.Schema({
-    name: String,
-    number: String,
+    name: {
+        type: String,
+        minLength: 8,
+        required: true
+    },
+    number: {
+        type: String,
+        validate: function (value) {
+            // Regex pattern to match either a simple local number or an international number
+            const phoneRegex = /^(\+\d{1,3}\s?)?\d{3}-?\d{3}-?\d{4}$/;
+            return phoneRegex.test(value);
+        },
+        minLength: 8,
+        message: 'Invalid Number'
+    },
 })
 
 Person.set('toJSON', {

@@ -10,7 +10,9 @@
     "build:ui": "rm -rf build && cd ../../part_02/phonebook && npm run build && cp -rf build ../../part_03/phonebook",
     "deploy": "fly deploy",
     "deploy:full": "npm run build:ui && npm run deploy",
-    "logs:prod": "fly logs"
+    "logs:prod": "fly logs",
+    "lint:init": "npx eslint --init",
+    "lint": "npx eslint ."
   },
   "author": "Samuel Frimpong",
   "license": "ISC",
@@ -23,6 +25,7 @@
     "morgan": "^1.10.0"
   },
   "devDependencies": {
+    "eslint": "^8.40.0",
     "nodemon": "^2.0.22"
   }
 }

@@ -1,3 +1,9 @@
+/* eslint-disable indent */
+const unknownEndpoint = (request, response, next) => {
+    response.status(404).send({ error: 'unknown endpoint' });
+    next()
+}
+
 const errorHandler = (error, request, response, next) => {
     console.error(error.message)
 
@@ -8,17 +14,21 @@ const errorHandler = (error, request, response, next) => {
         return response.status(400).json({ error: error.message })
     }
     else {
-        return response.status(500).end();
+        response.static(500).end();
     }
 
     next(error)
 }
-const unknownEndpoint = (request, response, next) => {
-    response.status(404).send({ error: 'unknown endpoint' });
-    next()
+
+const newestID = (notes) => {
+    const maxId = notes.length > 0
+        ? Math.max(...notes.map(n => n.id))
+        : 0
+    return maxId + 1
 }
 
 module.exports = {
+    unknownEndpoint,
     errorHandler,
-    unknownEndpoint
-};
+    newestID
+}

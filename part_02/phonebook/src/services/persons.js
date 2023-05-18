@@ -34,7 +34,12 @@ const addPerson = (new_person, setMessage, setMesageClass) => {
             return data;
         })
         .catch(err => {
-            console.log(err)
+            console.log(err.response.data.error)
+            setMesageClass('error')
+            setMessage(`${err.response.data.error}`)
+            setTimeout(() => {
+                setMessage(null);
+            }, 5000)
             return [];
         })
 }
@@ -52,9 +57,9 @@ const deletePerson = (id, name, setMessage, setMesageClass) => {
         }
     })
         .catch((err) => {
-            console.log(err);
+            console.log(err.response.data.error)
             setMesageClass('error')
-            setMessage(`cloudn't delete ${name}`)
+            setMessage(`${err.response.data.error}`)
             setTimeout(() => {
                 setMessage(null);
             }, 5000)
@@ -76,9 +81,9 @@ const updatePerson = (id, updatedPerson, setMessage, setMesageClass) => {
             return response.data;
         })
         .catch(err => {
-            console.log(err);
+            console.log(err.response.data.error)
             setMesageClass('error')
-            setMessage(`Couldn't add '${updatedPerson.name}'`)
+            setMessage(`${err.response.data.error}`)
             setTimeout(() => {
                 setMessage(null);
             }, 5000)

@@ -67,7 +67,7 @@ app.delete('/api/persons/:id', (req, res, next) => {
         })
 });
 
-app.post('/api/persons', (req, res) => {
+app.post('/api/persons', (req, res, next) => {
     const { number, name } = req.body;
     if (number === undefined ||
         number === null ||
@@ -80,7 +80,7 @@ app.post('/api/persons', (req, res) => {
         .then(person => res.status(201).json(person))
         .catch(e => {
             console.log('post /api/persons', e);
-            res.status(500).end()
+            return next(e)
         })
 
 });
@@ -88,7 +88,7 @@ app.post('/api/persons', (req, res) => {
 app.put('/api/persons/:id', (req, res) => {
     const { id } = req.params;
     const { name, number } = req.body;
-    people.findByIdAndUpdate(id, { name, number }, { new: true })
+    people.findByIdAndUpdate(id, { name, number }, { new: true, runValidators: true, context: 'query' })
         .then(result => {
             console.log('put /api/persons', result);
             return res.json(result)
