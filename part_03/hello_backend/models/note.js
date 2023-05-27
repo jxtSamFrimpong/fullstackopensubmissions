@@ -1,21 +1,5 @@
 /* eslint-disable indent */
-//const { MONGODB_URI } = require('./../utils/config')
-//const logger = require('../utils/logger');
 const mongoose = require('mongoose')
-
-// mongoose.set('strictQuery', false)
-
-// const url = MONGODB_URI
-
-// console.log('connecting to', url)
-
-// mongoose.connect(url)
-//     .then(() => {
-//         logger.info('connected to MongoDB')
-//     })
-//     .catch((error) => {
-//         logger.error('error connecting to MongoDB:', error.message)
-//     })
 
 const noteSchema = new mongoose.Schema({
     content: {
@@ -24,6 +8,10 @@ const noteSchema = new mongoose.Schema({
         required: true
     },
     important: Boolean,
+    user: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User'
+    }
 })
 
 noteSchema.set('toJSON', {

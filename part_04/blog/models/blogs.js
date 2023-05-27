@@ -24,6 +24,10 @@ const BlogSchema = new mongoose.Schema({
             message: '{VALUE} is not an integer value for questions'
         }
     },
+    user: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User'
+    }
 })
 
 BlogSchema.set('toJSON', {

@@ -2,7 +2,10 @@
 const mongoose = require('mongoose')
 const express = require('express');
 const cors = require('cors');
+require('express-async-errors')
 const notesRouter = require('./controllers/note')
+const usersRouter = require('./controllers/users')
+const loginRouter = require('./controllers/login')
 const { unknownEndpoint, errorHandler, requestLogger } = require('./utils/middle')
 const logger = require('./utils/logger')
 const morgan = require('morgan');
@@ -31,6 +34,8 @@ const customMorganFormat = ':method :url :status :res[content-length] - :respons
 app.use(morgan(customMorganFormat));
 
 app.use('/api/notes', notesRouter)
+app.use('/api/users', usersRouter)
+app.use('/api/login', loginRouter)
 app.get('/', (req, res) => {
     res.send('<h1>Hello pun</h1>');
 });
