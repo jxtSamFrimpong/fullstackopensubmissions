@@ -94,7 +94,8 @@ const TokenUserExtractor = (request, response, next) => {
 }
 
 const ExceptFromToken = (req, res, next) => {
-    if ((req.path === '/api/users' && req.method === 'POST') || (req.path === '/api/blogs' && req.method === 'GET')) {
+    //(req.path === '/api/blogs' && req.method === 'GET')
+    if (req.path === '/api/users' && req.method === 'POST') {
         req.exceptFromToken = true
     } else {
         req.exceptFromToken = false

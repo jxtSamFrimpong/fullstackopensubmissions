@@ -1,5 +1,6 @@
 /* eslint-disable indent */
 const logger = require('../utils/logger')
+const jwt = require('jsonwebtoken')
 
 const unknownEndpoint = (request, response, next) => {
     response.status(404).send({ error: 'unknown endpoint' });
@@ -43,9 +44,29 @@ const newestID = (notes) => {
     return maxId + 1
 }
 
+const getTokenFrom = (request, response, next) => {
+    const authorization = request.get('authorization')
+    if (authorization && authorization.startsWith('Bearer ')) {
+        request.token = authorization.replace('Bearer ', '')
+    }
+    else {
+        request.token = null
+    }
+    next()
+}
+
+const getTokenIdentity = (request, response, next) => {
+    const decodedToken = jwt.verify(request.token, process.env.SECRET)
+    request.tokenUser = decodedToken.id
+    request.tokenUserName = decodedToken.username
+    next()
+}
+
 module.exports = {
     unknownEndpoint,
     errorHandler,
     newestID,
-    requestLogger
+    requestLogger,
+    getTokenFrom,
+    getTokenIdentity
 }

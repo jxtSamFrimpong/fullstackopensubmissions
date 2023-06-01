@@ -1,8 +1,16 @@
 import axios from "axios";
 const baseURL = "/api/notes"; //https://jxtsamnotes.fly.dev
 
+let token = null
+const setToken = newToken => {
+    token = `Bearer ${newToken}`
+}
+
 const getAll = () => {
-    const request = axios.get(baseURL);
+    const config = {
+        headers: { Authorization: token },
+    }
+    const request = axios.get(baseURL, config);
     return request.then((response) => {
         console.log('back cut data on Success', response.data);
         const errorSimulant = {
@@ -18,7 +26,10 @@ const getAll = () => {
 }
 
 const create = (newObj, old_notes, setAddedNotifMessage, setAddedClass) => {
-    const request = axios.post(baseURL, newObj);
+    const config = {
+        headers: { Authorization: token },
+    }
+    const request = axios.post(baseURL, newObj, config);
     return request
         .then((response) => {
             console.log('posting note to server...', newObj)
@@ -41,7 +52,10 @@ const create = (newObj, old_notes, setAddedNotifMessage, setAddedClass) => {
 }
 
 const update = (id, newObj, existing_notes, setErrorNotifMessage, setAddedNotifMessage, setAddedClass) => {
-    const request = axios.put(`${baseURL}/${id}`, newObj);
+    const config = {
+        headers: { Authorization: token },
+    }
+    const request = axios.put(`${baseURL}/${id}`, newObj, config);
     return request
         .then((response) => {
             setAddedClass('added');
@@ -62,6 +76,6 @@ const update = (id, newObj, existing_notes, setErrorNotifMessage, setAddedNotifM
         });
 }
 
-const noteService = { getAll, create, update }
+const noteService = { getAll, create, update, setToken }
 
 export default noteService;
