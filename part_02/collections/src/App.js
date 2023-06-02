@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 
 import Note from "./components/Note";
 import ErrorNotif from './components/ErrorNotif';
@@ -6,6 +6,9 @@ import AddedNotif from './components/AddedNootifs';
 import LoginForm from './components/LoginForm';
 import WelcomeUser from './components/WelcomeUser';
 import Logout from './components/Logout'
+//import CancelLogin from './components/CancelLogin';
+import GenTogglable from './components/GenTog';
+import Togglable from './components/Toglable';
 
 import noteService from './services/notesService'
 import Footer from './components/footer'
@@ -50,31 +53,12 @@ const App = (props) => {
   useEffect(handleFetch, [user])
   //console.log('length of notes', notes.length)
 
+  const noteFormRef = useRef()
 
-  const handleTogglevalue = (event) => {
-    console.log(event.target.value)
-    //console.log(typeof (event.target.value))
-    const newVal = !toggleValue
-    console.log(newVal);
-    settoggleValue(newVal)
-    setShowAll(!newVal)
-  }
+  const [loginVisible, setLoginVisible] = useState(false)
+  const hideWhenVisible = { display: loginVisible ? 'none' : '' }
+  //const showWhenVisible = { display: loginVisible ? '' : 'none' }
 
-  const handleNoteToggleValue = (event, id_num, content, importance) => {
-    console.log('gonna change some notes toggle value', event.target.value, id_num)
-    const new_importance = !importance
-    const updated_note = {
-      content: content,
-      important: new_importance
-    }
-    noteService.update(id_num, updated_note, [...notes], setErrorNotifMessage, setAddedNotifMessage, setAddedClass)
-      .then(
-        (response) => {
-          console.log('respose inside handleNoteToggleValue', response);
-          setNotes(response)
-        }
-      )
-  }
 
   const handleLogin = async (event) => {
     event.preventDefault()
@@ -88,6 +72,7 @@ const App = (props) => {
       setUser(user)
       setUsername('')
       setPassword('')
+      setLoginVisible(false)
       // handleFetch()
     } catch (exception) {
       console.log(exception)
@@ -115,6 +100,7 @@ const App = (props) => {
 
     const addNote = (event) => {
       event.preventDefault()
+      noteFormRef.current.toggleVisibility()
       console.log('form submit button clicked ', event.target)
       console.log('newnote to submit', newNote)
       console.log('all notes before submit', notes)
@@ -146,9 +132,32 @@ const App = (props) => {
       </form>
     )
   }
-  const NoteSection = ({ toggleValue, handleTogglevalue, handleNoteToggleValue, noteToShow }) => {
-    // setAddedClass('added')
-    // setAddedNotifMessage()
+  const NoteSection = ({ toggleValue, noteToShow }) => {
+
+    const handleTogglevalue = (event) => {
+      console.log(event.target.value)
+      //console.log(typeof (event.target.value))
+      const newVal = !toggleValue
+      console.log(newVal);
+      settoggleValue(newVal)
+      setShowAll(!newVal)
+    }
+
+    const handleNoteToggleValue = (event, id_num, content, importance) => {
+      console.log('gonna change some notes toggle value', event.target.value, id_num)
+      const new_importance = !importance
+      const updated_note = {
+        content: content,
+        important: new_importance
+      }
+      noteService.update(id_num, updated_note, [...notes], setErrorNotifMessage, setAddedNotifMessage, setAddedClass)
+        .then(
+          (response) => {
+            console.log('respose inside handleNoteToggleValue', response);
+            setNotes(response)
+          }
+        )
+    }
 
     return (
       <div>
@@ -158,7 +167,9 @@ const App = (props) => {
         <ul>
           {noteToShow.map((note) => <Note key={note.id} content={note.content} id_num={note.id} importance={note.important} handler={handleNoteToggleValue} />)}
         </ul>
-        <NoteForm />
+        <GenTogglable buttonLabel={'new note'} ref={noteFormRef}>
+          <NoteForm />
+        </GenTogglable>
       </div>
     )
   }
@@ -175,22 +186,40 @@ const App = (props) => {
       {user === null ?
         null :
         <WelcomeUser addedNotifMesage={`Welcome ${user.username}`} addedClass={'added'} />}
-      {user === null ?
-        <LoginForm handleLogin={handleLogin}
-          username={username}
-          password={password}
-          setUsername={setUsername}
-          setPassword={setPassword} />
-        : <NoteSection toggleValue={toggleValue}
-          handleTogglevalue={handleTogglevalue}
-          handleNoteToggleValue={handleNoteToggleValue}
-          noteToShow={noteToShow}
-        />}
+      <Togglable buttonLabel='re-login' visible={loginVisible} setVisible={setLoginVisible} user={user}>
+        {<div>
+          <LoginForm handleLogin={handleLogin}
+            username={username}
+            password={password}
+            setUsername={setUsername}
+            setPassword={setPassword} />
+        </div>}
+      </Togglable>
+      {/* {(user === null) || loginVisible ?
+        <div style={showWhenVisible}>
+          <LoginForm handleLogin={handleLogin}
+            username={username}
+            password={password}
+            setUsername={setUsername}
+            setPassword={setPassword} />
+        </div> */}
+      {(user === null) || loginVisible ? null
+        : <div style={hideWhenVisible}>
+          <NoteSection toggleValue={toggleValue}
+            noteToShow={noteToShow}
+          />
+        </div>
+      }
+      <span>
         {
-          user !== null?
-          <Logout setUser={setUser}/>
-          : null
+          (user !== null) && !loginVisible ?
+            <Logout setUser={setUser} setLoginVisible={setLoginVisible} />
+            : null
         }
+        {/* {
+          <div style={showWhenVisible}><CancelLogin setLoginVisible={setLoginVisible} /></div>
+        } */}
+      </span>
       <Footer />
     </div>
   )

@@ -11,15 +11,15 @@ const App = () => {
   const [user, setUser] = useState(null)
 
   useEffect(() => {
-    if (user){
+    if (user) {
       blogService.getAll(user).then(blogs =>
-      setBlogs( blogs )
+        setBlogs(blogs)
       )
-    
-    }  
+
+    }
   }, [user])
 
-  useEffect(()=>{
+  useEffect(() => {
     const loggedInUserJSONstring = window.localStorage.getItem('loggedInUser')
     //console.log('json string logged in user', loggedInUserJSONstring)
     if (loggedInUserJSONstring) {
@@ -33,10 +33,10 @@ const App = () => {
     <div>
       {
         user === null ?
-        <LoginForm setUser={setUser} />:
-      <BlogSection blogs={blogs} setUser={setUser} username={user.username} setBlogs={setBlogs} token={user.token}/>
+          <LoginForm setUser={setUser} /> :
+          <BlogSection blogs={blogs} setUser={setUser} username={user.username} setBlogs={setBlogs} token={user.token} />
       }
-      
+
     </div>
   )
 }
