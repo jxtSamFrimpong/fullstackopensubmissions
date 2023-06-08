@@ -11,6 +11,8 @@ const logger = require('./utils/logger')
 const morgan = require('morgan');
 const config = require('./utils/config')
 
+const testingRouter = require('./controllers/testing')
+
 mongoose.set('strictQuery', false)
 
 logger.info('connecting to', config.MONGODB_URI)
@@ -36,6 +38,7 @@ app.use(morgan(customMorganFormat));
 app.use('/api/notes', getTokenFrom, getTokenIdentity, notesRouter)
 app.use('/api/users', usersRouter)
 app.use('/api/login', loginRouter)
+app.use('/api/testing', testingRouter)
 app.get('/', (req, res) => {
     res.send('<h1>Hello pun</h1>');
 });

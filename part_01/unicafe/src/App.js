@@ -1,5 +1,6 @@
 import { useState } from 'react'
 
+
 const Headline = ({ displayText }) => {
   return (
     <h1>{displayText}</h1>
@@ -48,7 +49,14 @@ const PosFeed = ({ displayText, feed }) => {
   )
 }
 
+const ResetStats = ({ resetHandler }) => {
+  return (
+    <Button displayText={'reset stats'} handler={resetHandler} />
+  )
+}
+
 const Statistics = ({ feed }) => {
+  console.log('recieved feed', feed)
   if ((feed.good + feed.bad + feed.neutral) === 0) {
     return (
       <p>Feedback not given yet</p>
@@ -70,7 +78,7 @@ const Statistics = ({ feed }) => {
   )
 }
 
-const App = () => {
+const App = ({ store }) => {
   const [feed, feedBack] = useState({
     good: 0,
     neutral: 0,
@@ -78,28 +86,36 @@ const App = () => {
   })
 
   const goodHandler = () => {
-    const newGood = feed.good + 1
-    feedBack({
-      ...feed,
-      good: newGood
-    })
+    // const newGood = feed.good + 1
+    // feedBack({
+    //   ...feed,
+    //   good: newGood
+    // })
+    const state = store.getState()
+    store.dispatch({ type: 'GOOD', payload: state })
   }
 
   const badHandler = () => {
-    const newBad = feed.bad + 1
-    feedBack({
-      ...feed,
-      bad: newBad
-    })
+    // const newBad = feed.bad + 1
+    // feedBack({
+    //   ...feed,
+    //   bad: newBad
+    // })
+    const state = store.getState()
+    store.dispatch({ type: 'BAD', payload: state })
   }
 
   const neutralHandler = () => {
-    const newNeutral = feed.neutral + 1
-    feedBack({
-      ...feed,
-      neutral: newNeutral
-    })
+    // const newNeutral = feed.neutral + 1
+    // feedBack({
+    //   ...feed,
+    //   neutral: newNeutral
+    // })
+    const state = store.getState()
+    store.dispatch({ type: 'NEUTRAL', payload: state })
   }
+
+  const resetHandler = () => { store.dispatch({ type: 'RESET' }) }
 
   return (
     <div>
@@ -108,9 +124,10 @@ const App = () => {
         <Button displayText={'good'} handler={goodHandler} />
         <Button displayText={'neutral'} handler={neutralHandler} />
         <Button displayText={'bad'} handler={badHandler} />
+        <ResetStats resetHandler={resetHandler} />
       </span>
       <Headline displayText={'statistics'} />
-      <Statistics feed={feed} />
+      <Statistics feed={store.getState()} />
     </div>
   )
 }

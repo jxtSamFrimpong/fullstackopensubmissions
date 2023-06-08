@@ -60,15 +60,15 @@ const Blog = ({ blog, token, setBlogs, allBlogs }) => {
 
   return (
     <div style={blogStyle}>
-      <span>{blog.title}  {!viewDetails ? <strong>{blog.author}</strong> : null} <button
+      <span>{blog.title}  {!viewDetails ? <strong className="strong-author">{blog.author}</strong> : null} <button
         onClick={() => { setViewDetails(!viewDetails) }}>{!viewDetails ? 'view' : 'hide'}</button>
       </span>
       {
         viewDetails ?
           <div>
             <a href={blog.url}>{blog.url}</a>
-            <div>likes {blog.likes} <button onClick={() => { likeHandler(blog.id, blog.likes) }}>like</button></div>
-            <div>{blog.author}</div>
+            <div>likes {blog.likes} <button onClick={() => { likeHandler(blog.id, blog.likes) }} className="like-button">like</button></div>
+            <div className="div-author">{blog.author}</div>
             <button onClick={() => { removeHandler(blog.id) }} style={removeStyle}>remove</button>
           </div>
           : null

@@ -9,22 +9,37 @@ import Logout from './components/Logout'
 //import CancelLogin from './components/CancelLogin';
 import GenTogglable from './components/GenTog';
 import Togglable from './components/Toglable';
+import NoteForm from './components/NoteForm';
 
 import noteService from './services/notesService'
 import Footer from './components/footer'
 import loginService from './services/login'
 
+//REDUX
+//import store from './store';
+import { useSelector, useDispatch } from 'react-redux'
+import actionCreators from './reducers/actionCreators';
+
 const App = (props) => {
+
+  const dispatch = useDispatch()
+  const store = useSelector(state => state)
 
   const handleFetch = () => {
     console.log('effect')
     noteService.getAll()
       .then((response) => {
         setNotes(response)
+        dispatch(actionCreators.allNew(response))
+        //console.log('store getstate', store.getState())
+
       })
       .catch((reason) => {
         console.log('deason for failure', reason);
         setNotes(reason)
+        dispatch(actionCreators.allNew(reason))
+        //console.log('reason getstate', store.getState())
+
       })
   }
 
@@ -84,54 +99,6 @@ const App = (props) => {
     }
   }
 
-  const NoteForm = () => {
-    const [newNote, setNewNote] = useState(
-      'a new note...'
-    )
-    const postNoteToServer = (new_note) => {
-      noteService.create(new_note, [...notes], setAddedNotifMessage, setAddedClass)
-        .then((response) => {
-          console.log('response returned after posting new note to server', response)
-          setNotes(response)
-        }).catch((reason) => {
-          console.log('what went wrong', reason)
-        })
-    }
-
-    const addNote = (event) => {
-      event.preventDefault()
-      noteFormRef.current.toggleVisibility()
-      console.log('form submit button clicked ', event.target)
-      console.log('newnote to submit', newNote)
-      console.log('all notes before submit', notes)
-
-      let noteToSet = {
-        //id: [...notes].pop().id + 1,
-        content: newNote,
-        important: Math.random() < 0.5
-      }
-      //setNotes(notes.concat(noteToSet))
-      postNoteToServer(noteToSet)
-      setNewNote('')
-
-    }
-
-    const handleNoteChange = (event) => {
-      console.log(event.target.value)
-      setNewNote(event.target.value)
-    }
-
-    return (
-      <form onSubmit={addNote}>
-        <input
-          type="text"
-          value={newNote}
-          onChange={handleNoteChange}
-        />
-        <button type='submit'>save</button>
-      </form>
-    )
-  }
   const NoteSection = ({ toggleValue, noteToShow }) => {
 
     const handleTogglevalue = (event) => {
@@ -150,11 +117,12 @@ const App = (props) => {
         content: content,
         important: new_importance
       }
-      noteService.update(id_num, updated_note, [...notes], setErrorNotifMessage, setAddedNotifMessage, setAddedClass)
+      noteService.update(id_num, updated_note, store, setErrorNotifMessage, setAddedNotifMessage, setAddedClass)
         .then(
           (response) => {
             console.log('respose inside handleNoteToggleValue', response);
             setNotes(response)
+            dispatch(actionCreators.allNew(response))
           }
         )
     }
@@ -168,15 +136,18 @@ const App = (props) => {
           {noteToShow.map((note) => <Note key={note.id} content={note.content} id_num={note.id} importance={note.important} handler={handleNoteToggleValue} />)}
         </ul>
         <GenTogglable buttonLabel={'new note'} ref={noteFormRef}>
-          <NoteForm />
+          <NoteForm setAddedNotifMessage={setAddedNotifMessage} setAddedClass={setAddedClass} setNotes={setNotes} noteFormRef={noteFormRef} notes={store} />
         </GenTogglable>
       </div>
     )
   }
 
+  // const noteToShow = showAll
+  //   ? notes
+  //   : notes.filter((note) => note.important)
   const noteToShow = showAll
-    ? notes
-    : notes.filter((note) => note.important)
+    ? store
+    : store.filter((note) => note.important)
 
   return (
     <div>
