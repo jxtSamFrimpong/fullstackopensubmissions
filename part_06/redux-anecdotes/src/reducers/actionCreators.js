@@ -1,22 +1,22 @@
 import { asObject } from "./anecdoteReducer"
 
 export const addVote = id => {
-    return { type: 'VOTE', payload: id }
+    return { type: 'anecdote/vote', payload: id }
 }
 
 export const addDote = (dote) => {
     return {
-        type: 'DOTE',
+        type: 'anecdote/dote',
         payload: asObject(dote)
     }
 }
 
 export const descend = () => {
     return {
-        type: 'DES'
+        type: 'anecdote/des'
     }
 }
 
 export const ascend = () => {
-    return { type: 'ASC' }
+    return { type: 'anecdote/asc' }
 }

@@ -1,15 +1,26 @@
 import { useSelector, useDispatch } from 'react-redux'
 import { addVote } from '../reducers/actionCreators'
 import { useEffect } from 'react'
+import { vote } from '../reducers/anecdoteReducer'
+import { setNotif, removeNotif } from '../reducers/notificationReducer'
 
 const AnecdoteList = () => {
-    const anecdotes = useSelector(({anecdotes}) => anecdotes)
+    const anecdotes = useSelector(({anecdote}) => anecdote)
     const filter = useSelector(({filter})=> filter)
     const dispatch = useDispatch()
+    
     let filteredAnecdoted = anecdotes.filter(anecdote => anecdote.content.toLowerCase().includes(filter.toLowerCase()))
-    const vote = (id) => {
+    const voteUp = (id) => {
         console.log('vote', id)
-        dispatch(addVote(id))
+        // dispatch(addVote(id))
+        dispatch(vote(id))
+
+        const content = anecdotes.find(anecdote => anecdote.id === id)
+        console.log(content)
+        dispatch(setNotif(`The note '${content.content}' has been upvoted`))
+        setTimeout(()=>{
+            dispatch(removeNotif())
+        }, 5000)
     }
 
     useEffect(()=>{
@@ -25,7 +36,7 @@ const AnecdoteList = () => {
                 </div>
                 <div>
                     has {anecdote.votes}
-                    <button onClick={() => vote(anecdote.id)}>vote</button>
+                    <button onClick={() => voteUp(anecdote.id)}>vote</button>
                 </div>
             </div>
         )}
