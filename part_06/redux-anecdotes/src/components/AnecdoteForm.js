@@ -1,23 +1,20 @@
 import { useDispatch } from 'react-redux'
-// import { addDote } from '../reducers/actionCreators'
-import { dote } from '../reducers/anecdoteReducer'
-import { setNotif, removeNotif } from '../reducers/notificationReducer'
+import { doteThunk } from '../reducers/anecdoteReducer'
+import {  notifThunk } from '../reducers/notificationReducer'
  
 const AnecdoteForm = () => {
     const dispatch = useDispatch()
 
     const Dote = (event) => {
         event.preventDefault()
-        console.log(event.target.dote.value)
-        //dispatch(addDote(event.target.dote.value))
-        dispatch(dote(event.target.dote.value))
+        //console.log(event.target.dote.value)
+        const object = { votes: 0, content: event.target.dote.value}
 
-        const result = dispatch(setNotif(`A new note '${event.target.dote.value}' has been created`))
-        console.log(result)
+        dispatch(doteThunk(object))
+
+        const notifMessage = `A new note '${event.target.dote.value}' has been created`
         event.target.dote.value = ''
-        setTimeout(()=>{
-            dispatch(removeNotif())
-        }, 5000)
+        dispatch(notifThunk(notifMessage))
     }
     return (
         <div>

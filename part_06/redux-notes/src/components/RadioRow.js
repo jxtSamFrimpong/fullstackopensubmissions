@@ -1,14 +1,11 @@
-import { filterChange } from '../reducers/filterReducer'
+import { setFilter } from '../reducers/filterReducer'
 import { useDispatch } from 'react-redux'
 
 const RadioRow = () => {
     const dispatch = useDispatch()
 
     const handleSelect = (event) => {
-        //event.preventDefault()
-        // console.log(event.target.id)
-        dispatch(filterChange(event.target.id))
-
+        dispatch(setFilter(event.target.id))
     }
     return (
         <fieldset>

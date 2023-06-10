@@ -5,7 +5,7 @@ import RadioRow from './RadioRow'
 const NewNote = (props) => {
   const dispatch = useDispatch()
 
-  const addNote = (event) => {
+  const addNote = async(event) => {
     event.preventDefault()
     const content = event.target.note.value
     event.target.note.value = ''
