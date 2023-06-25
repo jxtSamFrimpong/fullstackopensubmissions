@@ -22,9 +22,19 @@ const App = () => {
   useEffect(() => {
     const loggedInUserJSONstring = window.localStorage.getItem('loggedInUser')
     //console.log('json string logged in user', loggedInUserJSONstring)
-    if (loggedInUserJSONstring) {
+    // if (loggedInUserJSONstring) {
+    //   const user = JSON.parse(loggedInUserJSONstring)
+    //   setUser(user) 
+    // }
+    try{
       const user = JSON.parse(loggedInUserJSONstring)
-      setUser(user)
+      const tryBlogs = blogService.getAll(user)
+      if (tryBlogs){
+        setUser(user)
+      }
+    }
+    catch(e){
+      console.log('authentication error, login again')
     }
   }, [])
 

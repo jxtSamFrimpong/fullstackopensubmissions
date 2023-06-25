@@ -2,13 +2,13 @@ import { createSlice } from '@reduxjs/toolkit'
 
 const notificationReducer = createSlice({
     name: 'notification',
-    initialState: '',
+    initialState: null,
     reducers: {
         setNotif(state, action){
             return action.payload
         },
         removeNotif(state, action){
-            return ''
+            return null
         },
     }
 })

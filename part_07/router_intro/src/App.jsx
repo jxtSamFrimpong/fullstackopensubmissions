@@ -1,6 +1,7 @@
 //import ReactDOM from 'react-dom/client'
 import { useState } from 'react'
-import { Table, Form, Button, Alert, Navbar, Nav } from 'react-bootstrap'
+import {Navbar, Nav } from 'react-bootstrap'
+import { Container, Table, TableContainer, TableRow, TableCell, TableBody, Paper, TextField, Button, Alert } from '@mui/material'
 
 import {
   BrowserRouter as Router,
@@ -43,22 +44,31 @@ const Notes = ({ notes }) => (
         </li>
       )}
     </ul> */}
-    <Table striped>
-      <tbody>
+    <TableContainer component={Paper}>
+    <Table>
+      {/* <tbody> */}
+      <TableBody>
         {notes.map(note =>
-          <tr key={note.id}>
-            <td>
+          <TableRow key={note.id}>
+            {/* <td> */}
+            <TableCell>
               <Link to={`/notes/${note.id}`}>
                 {note.content}
               </Link>
-            </td>
-            <td>
+              </TableCell>
+            {/* </td> */}
+            {/* <td> */}
+            <TableCell>
               {note.user}
-            </td>
-          </tr>
+            {/* </td> */}
+            </TableCell>
+          {/* </tr> */}
+          </TableRow>
         )}
-      </tbody>
-    </Table>
+      {/* </tbody> */}
+      </TableBody>
+      </Table>
+    </TableContainer>
   </div>
 )
 
@@ -83,31 +93,47 @@ const Login = (props) => {
   }
 
   return (
+    // <div>
+    //   <h2>login</h2>
+    //   <Form onSubmit={onSubmit}>
+    //     <Form.Group>
+    //       <Form.Label>username:</Form.Label>
+    //     {/* <div>
+    //       username: <input />
+    //     </div> */}
+    //     <Form.Control
+    //         type="text"
+    //         name="username"
+    //       />
+    //     {/* <div>
+    //       password: <input type='password' />
+    //     </div> */}
+    //     <Form.Label>password:</Form.Label>
+    //       <Form.Control
+    //         type="password"
+    //       />
+    //     {/* <button type="submit">login</button> */}
+    //     <Button variant="primary" type="submit">
+    //         login
+    //       </Button>
+    //       </Form.Group>
+    //   </Form>
+    // </div>
     <div>
       <h2>login</h2>
-      <Form onSubmit={onSubmit}>
-        <Form.Group>
-          <Form.Label>username:</Form.Label>
-        {/* <div>
-          username: <input />
-        </div> */}
-        <Form.Control
-            type="text"
-            name="username"
-          />
-        {/* <div>
-          password: <input type='password' />
-        </div> */}
-        <Form.Label>password:</Form.Label>
-          <Form.Control
-            type="password"
-          />
-        {/* <button type="submit">login</button> */}
-        <Button variant="primary" type="submit">
+      <form onSubmit={onSubmit}>
+        <div>
+          <TextField label="username" />
+        </div>
+        <div>
+          <TextField label="password" type='password' />
+        </div>
+        <div>
+          <Button variant="contained" color="primary" type="submit">
             login
           </Button>
-          </Form.Group>
-      </Form>
+        </div>
+      </form>
     </div>
   )
 }
@@ -155,9 +181,9 @@ const App = () => {
     : null
 
   return (
-    <div className='container'>
+    <Container>
     {(message &&
-      <Alert variant="success" >{message}</Alert>)}
+      <Alert severity="success" >{message}</Alert>)}
         <div>
           {/* <Link style={padding} to="/">home</Link>
           <Link style={padding} to="/notes">notes</Link>
@@ -201,7 +227,7 @@ const App = () => {
         <br />
         <em>Note app, Department of Computer Science 2023</em>
       </div>
-    </div>
+    </Container>
   )
 }
 
