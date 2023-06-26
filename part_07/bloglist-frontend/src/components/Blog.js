@@ -7,6 +7,10 @@ import { setNotifClass } from '../reducers/notifClass'
 import { notifThunk } from '../reducers/notifReducer'
 import {upvoteBlog, removeBlog} from '../reducers/blogReducer'
 
+import {
+  Link
+} from 'react-router-dom'
+
 const Blog = ({ blog }) => {
   const dispatch = useDispatch()
   const token = useSelector(({user})=>user.token)
@@ -82,7 +86,7 @@ const Blog = ({ blog }) => {
 
   return (
     <div style={blogStyle}>
-      <span>{blog.title}  {!viewDetails ? <strong className="strong-author">{blog.author}</strong> : null} <button
+      <span><Link to={`/blogs/${blog.id}`}>{blog.title}</Link>  {!viewDetails ? <strong className="strong-author">{blog.author}</strong> : null} <button
         onClick={() => { setViewDetails(!viewDetails) }}>{!viewDetails ? 'view' : 'hide'}</button>
       </span>
       {

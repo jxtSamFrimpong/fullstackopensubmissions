@@ -7,9 +7,21 @@ import { setUser } from '../reducers/userReducer'
 import Login from '../services/login'
 import Notif from './Notif'
 
+import {
+  useNavigate
+} from 'react-router-dom'
+
+import {
+  useUsers,
+  useBlogs
+} from '../hooks'
+
 const LoginForm = () => {
+  useUsers()
+  useBlogs()
   const dispatch = useDispatch()
   const notification = useSelector(({notification}) => notification)
+  const navigate = useNavigate()
 
   const [userName, setUsername] = useState('')
   const [pass, setPass] = useState('')
@@ -42,6 +54,8 @@ const LoginForm = () => {
       
       setUsername('')
       setPass('')
+
+      navigate('/')
 
 
       window.localStorage.setItem('loggedInUser', JSON.stringify(credentials))

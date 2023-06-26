@@ -21,6 +21,13 @@ const blogs = createSlice({
         },
         dscSort(state, action){
             return state.sort((a, b) => b.likes - a.likes)
+        },
+        commentBlog(state, action){
+            const {id, comment} = action.payload
+            return state.map(blog => blog.id!==id ? blog : {
+                ...blog,
+                comments: blog?.comments?.concat(comment) || [comment]
+            })
         }
     }
 })
@@ -35,5 +42,5 @@ const blogs = createSlice({
 //     }
 // }
 
-export const { setBlogs, addBlog, upvoteBlog, removeBlog, ascSort, dscSort} = blogs.actions
+export const { setBlogs, addBlog, upvoteBlog, removeBlog, ascSort, dscSort, commentBlog} = blogs.actions
 export default blogs.reducer

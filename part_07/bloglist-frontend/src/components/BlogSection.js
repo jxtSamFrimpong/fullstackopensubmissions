@@ -1,19 +1,34 @@
 import { useState, useEffect, useRef } from 'react'
-import Notif from './Notif'
-import Logout from './Lougt'
+//import Notif from './Notif'
+//import Logout from './Lougt'
 import Blog from './Blog'
 import AddBlog from './AddBlog'
 import Togglable from './Togglable'
+import BlogsHeader from './BlogsHeader'
+
 import { useSelector, useDispatch } from 'react-redux'
 import { setNotifClass } from '../reducers/notifClass'
 import { notifThunk } from '../reducers/notifReducer'
 import { ascSort, dscSort } from '../reducers/blogReducer'
 
+import {
+  Navigate
+} from 'react-router-dom'
+
+import {
+  useUsers,
+  useBlogs
+} from '../hooks'
+
 const BlogSection = () => {
+  useUsers()
+  useBlogs()
   const dispatch = useDispatch()
-  const notification = useSelector(({notification})=> notification)
+  //const notification = useSelector(({notification})=> notification)
+  const user = useSelector(({user})=>user)
   const blogs = useSelector(({blogs})=> blogs)
-  const username = useSelector(({user}) => user.username)
+  const username = useSelector(({user}) => user?.username)
+  // const navigate = useNavigate()
 
   console.log(blogs)
   const [sortBlogsDSC, setSortBlogDSC] = useState(false)
@@ -51,14 +66,16 @@ const BlogSection = () => {
   }
 
   return (
-    <div>
-      <h2>blogs</h2>
+    user !== null?
+      <div>
+      {/* <h2>blogs</h2>
       {notification !== null ?
         <Notif /> :
         null}
       <div>{username} is logged in
         <Logout />
-      </div>
+      </div> */}
+      <BlogsHeader />
       <Togglable buttonLabel={'new blog'} ref={blogToggle}>
         <AddBlog blogToggle={blogToggle} />
       </Togglable>
@@ -66,7 +83,8 @@ const BlogSection = () => {
       {blogs.map(blog =>
         <Blog key={blog.id} blog={blog} />
       )}
-    </div>
+    </div>:
+    <Navigate replace to={'/login'} />
   )
 }
 
