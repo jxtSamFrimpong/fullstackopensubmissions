@@ -113,7 +113,7 @@ const typeDefs = `
         title: String!
         published: Int!
         author: String!
-        genres: [String!]!
+        genres: [Genre!]!
         id: ID!
     }
     type Query {
@@ -142,7 +142,7 @@ const resolvers = {
     // Book: {
     //     genres: (root) => {
     //         return root.genres.map(name => {
-    //             name
+    //             return {name}
     //         })
     //     }
     // },
@@ -167,7 +167,16 @@ const resolvers = {
             if (genre) {
                 gloBooks = gloBooks.filter(book => book.genres.includes(genre))
             }
-            return gloBooks
+            //.map(book => {...book, genres: book.genres.map(name => {name})})
+            gloBooks = gloBooks.map((bk) => {
+                return {
+                    ...bk, genres: bk.genres.map(name => {
+                        return { name }
+                    }
+                    )
+                }
+            })
+            return gloBooks;
         },
         allAuthors: () => authors
     },
@@ -183,7 +192,12 @@ const resolvers = {
                     id: uuid()
                 })
             }
-            return book
+            return {
+                ...book,
+                genres: book.genres.map(name => {
+                    return { name }
+                })
+            }
         },
         editAuthor: (root, args) => {
             const { name, born } = args
