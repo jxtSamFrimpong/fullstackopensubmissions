@@ -1,0 +1,17 @@
+{
+  "name": "library",
+  "version": "0.0.1",
+  "description": "graphql library backend",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "nodemon index.js"
+  },
+  "author": "jxtSamFrimpong",
+  "license": "ISC",
+  "dependencies": {
+    "@apollo/server": "^4.7.5",
+    "graphql": "^16.7.1",
+    "nodemon": "^2.0.22"
+  }
+}
