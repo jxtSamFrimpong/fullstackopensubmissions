@@ -1,19 +1,13 @@
-//import { useState } from 'react'
+import { useState } from 'react'
 //import PropTypes from 'prop-types'
-import { gql, useQuery } from '@apollo/client'
+import { useQuery } from '@apollo/client'
 import './App.css'
 import Persons from './components/Persons'
 import PersonForm from './components/Persons/PersonForm'
+import { ALL_PERSONS } from './queries'
+import Notify from './components/Notif'
+import EditPerson from './components/Persons/EditPerson'
 
-const ALL_PERSONS = gql`
-query {
-  allPersons {
-    name
-    phone
-    id
-  }
-}
-`
 
 // const FIND_PERSON = gql`
 //   query findPersonByName($nameToSearch: String!) {
@@ -87,8 +81,16 @@ query {
 
 const App = () => {
   const result = useQuery(ALL_PERSONS, {
-    pollInterval: 2000
+    // pollInterval: 2000
   })
+  const [errorMessage, setErrorMessage] = useState(null)
+
+  const notify = (message) => {
+    setErrorMessage(message)
+    setTimeout(() => {
+      setErrorMessage(null)
+    }, 10000)
+  }
 
   if (result.loading) {
     return <div>loading...</div>
@@ -96,8 +98,10 @@ const App = () => {
 
   return (
     <>
+      <Notify errorMessage={errorMessage} />
       <Persons persons={result.data.allPersons} />
-      <PersonForm />
+      <PersonForm setError={notify} />
+      <EditPerson setError={notify} />
     </>
   )
 }
