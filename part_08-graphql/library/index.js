@@ -182,6 +182,7 @@ const resolvers = {
                 }
             }
             const existingAuthor = await Author.findOne({ name: args.author })
+            //console.log('existingAuthor', existingAuthor)
 
             try {
                 const book = new Book({ ...args, author: existingAuthor._id })
