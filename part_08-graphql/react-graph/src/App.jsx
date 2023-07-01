@@ -1,10 +1,10 @@
 import { useState } from 'react'
 //import PropTypes from 'prop-types'
-import { useQuery, useApolloClient } from '@apollo/client'
+import { useQuery, useApolloClient, useSubscription } from '@apollo/client'
 import './App.css'
 import Persons from './components/Persons'
 import PersonForm from './components/Persons/PersonForm'
-import { ALL_PERSONS } from './queries'
+import { ALL_PERSONS, PERSON_ADDED } from './queries'
 import Notify from './components/Notif'
 import EditPerson from './components/Persons/EditPerson'
 import LoginForm from './components/LoginForm'
@@ -15,6 +15,27 @@ const App = () => {
   const result = useQuery(ALL_PERSONS, {
     // pollInterval: 2000
   })
+  const client = useApolloClient()
+  useSubscription(PERSON_ADDED, {
+    onData: ({ data }) => {
+      console.log('person added suscription data', data)
+      const addedPerson = data.data.personAdded
+      notify(`${addedPerson.name} added`)
+      client.cache.updateQuery({ query: ALL_PERSONS }, ({ allPersons }) => {
+        const personExists = allPersons.find(p => p.id === addedPerson.id)
+        if (personExists) {
+          return {
+            allPersons: allPersons.map(p => p.id !== addedPerson.id ? p : addedPerson)
+          }
+        }
+        else {
+          return {
+            allPersons: allPersons.concat(addedPerson),
+          }
+        }
+      })
+    }
+  })
 
   const notify = (message) => {
     setErrorMessage(message)
@@ -22,7 +43,6 @@ const App = () => {
       setErrorMessage(null)
     }, 10000)
   }
-  const client = useApolloClient()
   const logout = () => {
     setToken(null)
     localStorage.clear()

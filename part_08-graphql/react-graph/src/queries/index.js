@@ -50,3 +50,12 @@ export const LOGIN = gql`
     }
   }
 `
+
+export const PERSON_ADDED = gql`
+  subscription {
+    personAdded {
+      ...PersonResponseFragment
+    }
+  }
+  ${PERSON_RESPONSE_FRAGMENT}
+`

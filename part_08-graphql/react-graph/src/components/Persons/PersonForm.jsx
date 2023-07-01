@@ -2,7 +2,7 @@ import { useState } from 'react'
 import PropTypes from 'prop-types'
 import { useMutation } from '@apollo/client'
 import { CREATE_PERSON } from '../../queries'
-import { ALL_PERSONS } from '../../queries'
+//import { ALL_PERSONS } from '../../queries'
 
 
 
@@ -22,13 +22,13 @@ const PersonForm = ({ setError }) => {
             const messages = error.graphQLErrors[0].message
             setError(messages)
         },
-        update: (cache, response) => {
-            cache.updateQuery({ query: ALL_PERSONS }, ({ allPersons }) => {
-                return {
-                    allPersons: allPersons.concat(response.data.addPerson),
-                }
-            })
-        },
+        // update: (cache, response) => {
+        //     cache.updateQuery({ query: ALL_PERSONS }, ({ allPersons }) => {
+        //         return {
+        //             allPersons: allPersons.concat(response.data.addPerson),
+        //         }
+        //     })
+        // },
     })
 
     const submit = (event) => {
