@@ -7,7 +7,6 @@ const cors = require('cors')
 const http = require('http')
 const { WebSocketServer } = require('ws')
 const { useServer } = require('graphql-ws/lib/use/ws')
-const { startStandaloneServer } = require('@apollo/server/standalone')
 const typeDefs = require('./schema/schema')
 const resolvers = require('./resolvers/resolvers')
 

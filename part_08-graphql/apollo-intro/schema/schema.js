@@ -12,6 +12,8 @@ const typeDefs = `
     phone: String
     address: Address!
     id: ID!
+    friendOf: [User!]!
+
   }
 
   type User {

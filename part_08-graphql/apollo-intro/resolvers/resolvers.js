@@ -13,6 +13,15 @@ const resolvers = {
                 street: root.street,
                 city: root.city
             }
+        },
+        friendOf: async (root) => {
+            // return list of users 
+            const friends = await User.find({
+                friends: {
+                    $in: [root._id]
+                }
+            })
+            return friends
         }
     },
     Query: {
