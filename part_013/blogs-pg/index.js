@@ -1,8 +1,13 @@
-const config = require('./utils/config')
+const { PORT } = require('./utils/config')
 const logger = require('./utils/logger')
+const { connectToDatabase } = require('./utils/db')
 const app = require('./app')
 
 
-app.listen(config.PORT, () => {
-    logger.info(`Server running on port ${config.PORT}`)
-})
+const start = async () => {
+    await connectToDatabase()
+    app.listen(PORT, () => {
+        logger.info(`Server running on port ${PORT}`)
+    })
+}
+start()
