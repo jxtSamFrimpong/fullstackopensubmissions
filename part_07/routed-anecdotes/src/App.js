@@ -1,10 +1,12 @@
-import { useState,
-useEffect } from 'react'
+import {
+  useState,
+  useEffect
+} from 'react'
 import {
   BrowserRouter as Router,
   Routes,
-  Route, 
-  Link, 
+  Route,
+  Link,
   useParams,
   useMatch,
   useNavigate
@@ -33,18 +35,18 @@ const AnecdoteList = ({ anecdotes }) => (
   </div>
 )
 
-const Anecdote = ({anecdote, vote})=>{
+const Anecdote = ({ anecdote, vote }) => {
   //const id = useParams().id
   //const anecdote = anecdotes.find(dote => dote.id === Number(id))
 
-  return(
+  return (
     <article>
       <h3>{anecdote.content}</h3>
       <p><em>By: {anecdote.author}</em></p>
       <span>source: {anecdote.info}</span>
-      <p><label>votes: <button onClick={()=>{vote(anecdote.id)}}>{
+      <p><label>votes: <button onClick={() => { vote(anecdote.id) }}>{
         anecdote.votes}
-        </button>
+      </button>
       </label>
       </p>
     </article>
@@ -74,14 +76,11 @@ const Footer = () => (
 )
 
 const CreateNew = (props) => {
-  // const [content, setContent] = useState('')
-  // const [author, setAuthor] = useState('')
-  // const [info, setInfo] = useState('')
-  
+
   const navigate = useNavigate()
-  const {reset: resetContent, ...contentField} = useField('text', 'content')
-  const {reset: resetAuthor, ...authorField} = useField('text', 'author')
-  const {reset: resetInfo, ...infoField} = useField('text', 'info')
+  const { reset: resetContent, ...contentField } = useField('text', 'content')
+  const { reset: resetAuthor, ...authorField } = useField('text', 'author')
+  const { reset: resetInfo, ...infoField } = useField('text', 'info')
 
 
   const handleSubmit = (e) => {
@@ -96,7 +95,7 @@ const CreateNew = (props) => {
     navigate(`/anecdotes/${id}`)
   }
 
-  const reset = (event)=>{
+  const reset = (event) => {
     resetContent()
     resetAuthor()
     resetInfo()
@@ -128,12 +127,12 @@ const CreateNew = (props) => {
 
 }
 
-const Notification = ({message})=>{
+const Notification = ({ message }) => {
 
   //const style = {}
 
-  return message === null? null:
-  <p>{message}</p>
+  return message === null ? null :
+    <p>{message}</p>
 }
 
 const App = () => {
@@ -153,7 +152,7 @@ const App = () => {
       id: 2
     }
   ])
-  
+
 
   const [notification, setNotification] = useState(null)
 
@@ -178,27 +177,27 @@ const App = () => {
     notify(`The anecdote: ${anecdote.content} has been upvoted`)
   }
 
-  const notify=(message)=>{
+  const notify = (message) => {
     setNotification(message)
-    setTimeout(()=>{
+    setTimeout(() => {
       setNotification(null)
     }, 5000)
   }
 
-  const specificDoteUrlCalled =  useMatch('/anecdotes/:id')
+  const specificDoteUrlCalled = useMatch('/anecdotes/:id')
   const specificDote = specificDoteUrlCalled ?
-  anecdotes.find(dote => dote.id === Number(specificDoteUrlCalled.params.id)):
-  null
+    anecdotes.find(dote => dote.id === Number(specificDoteUrlCalled.params.id)) :
+    null
 
   return (
     <div>
       <h1>Software anecdotes</h1>
       <Menu />
-      <Notification message={notification}/>
+      <Notification message={notification} />
       <Routes>
-        <Route path='/' element={<AnecdoteList anecdotes={anecdotes}/>}/>
+        <Route path='/' element={<AnecdoteList anecdotes={anecdotes} />} />
         <Route path='/about' element={<About />} />
-        <Route path='/create' element={<CreateNew notify={notify} addNew={addNew}/>} />
+        <Route path='/create' element={<CreateNew notify={notify} addNew={addNew} />} />
         <Route path='/anecdotes/:id' element={<Anecdote anecdote={specificDote} vote={vote} />} />
       </Routes>
       <Footer />

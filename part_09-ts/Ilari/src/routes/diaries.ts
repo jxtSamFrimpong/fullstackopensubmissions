@@ -10,7 +10,7 @@ const router = express.Router();
 
 router.get('/', (_req, res) => {
     //res.send('Fetching all diaries!');
-    res.json(diaryService.getNonSensitiveEntries()).send();
+    res.json(diaryService.getNonSensitiveEntries());
 });
 
 router.get('/:id', (req, res) => {
@@ -18,7 +18,7 @@ router.get('/:id', (req, res) => {
     console.log(diary);
 
     if (diary) {
-        res.json(diary).send();
+        res.json(diary);
     } else {
         res.sendStatus(404);
     }
