@@ -1,0 +1,30 @@
+services:
+  pgdb:
+    image: bitnami/postgresql:15
+    ports:
+      - '5432'
+    volumes:
+      - 'postgresql_data_master:/bitnami/postgresql'
+    environment:
+      - POSTGRESQL_PASSWORD=${POSTGRESQL_PASSWORD}
+      - POSTGRESQL_DATABASE=${POSTGRESQL_DATABASE}
+      - POSTGRESQL_USERNAME=${POSTGRESQL_USERNAME}
+      - POSTGRESQL_REPLICATION_MODE=master
+      - POSTGRESQL_REPLICATION_USER=${POSTGRESQL_REPLICATION_USER_MASTER}
+      - POSTGRESQL_REPLICATION_PASSWORD=${POSTGRESQL_REPLICATION_PASSWORD_MASTER}
+  postgresql-slave:
+    image: 'bitnami/postgresql:15'
+    ports:
+      - '5432'
+    depends_on:
+      - pgdb
+    environment:
+      - POSTGRESQL_REPLICATION_MODE=slave
+      - POSTGRESQL_REPLICATION_USER=${POSTGRESQL_REPLICATION_USER_SLAVE}
+      - POSTGRESQL_REPLICATION_PASSWORD=${POSTGRESQL_REPLICATION_PASSWORD_SLAVE}
+      - POSTGRESQL_MASTER_HOST=pgdb
+      - POSTGRESQL_MASTER_PORT_NUMBER=5432
+      - POSTGRESQL_PASSWORD=${POSTGRESQL_PASSWORD_SLAVE}
+
+volumes:
+  postgresql_data_master:
