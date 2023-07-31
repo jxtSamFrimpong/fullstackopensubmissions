@@ -1,3 +1,4 @@
+const { Op } = require('sequelize')
 const router = require('express').Router()
 const { Note, User } = require('../models')
 const { tokenExtractor } = require('../middlewares/auth')
@@ -8,12 +9,22 @@ const noteFinder = async (req, res, next) => {
 }
 
 router.get('/', async (req, res) => {
+    const whereConditions = {}
+    if (req.query.important) {
+        whereConditions.important = req.query.important === 'true'
+    }
+    if (req.query.search) {
+        whereConditions.content = {
+            [Op.substring]: req.query.search
+        }
+    }
     const notes = await Note.findAll({
         attributes: { exclude: ['userId'] },
         include: {
             model: User,
             attributes: ['name']
-        }
+        },
+        where: whereConditions
     })
     console.log(JSON.stringify(notes, null, 2))
 
