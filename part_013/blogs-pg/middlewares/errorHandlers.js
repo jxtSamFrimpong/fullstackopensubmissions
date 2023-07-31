@@ -19,13 +19,19 @@ const errorHandler = (error, request, response, next) => {
         return response.status(400).send({ error: error.message })
     }
     if (error.name === 'SequelizeValidationError') {
-        return response.status(400).send({ error: error.errors })
+        return response.status(400).send({ error: error.errors[0].message })
     }
     else if (error.name === 'PostBlogTypeValidatorError') {
         return response.status(400).send({ error: error.message })
     }
     else if (error.name === 'SequelizeConnectionRefusedError') {
         return response.status(500).send({ error: "cant connect to database, please try again later" })
+    }
+    else if (error.name === 'SequelizeUniqueConstraintError') {
+        if (error.errors[0].message.includes('username')) {
+            return response.status(400).json({ error: "username is already taken" })
+        }
+        return response.status(400).json({ error: error.errors[0].message })
     }
     else if (error.name === "ValidationError") {
         return response.status(400).json({ error: error.message })

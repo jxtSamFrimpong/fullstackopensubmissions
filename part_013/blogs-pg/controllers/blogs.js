@@ -1,10 +1,15 @@
 const router = require('express').Router()
-const { Blog } = require('../models')
+const { Blog, User } = require('../models')
 const blogFinder = require('../middlewares/blogFinder')
 const { PostBlogTypeValidatorError } = require('../middlewares/typeValidators')
+const { tokenExtractor } = require('../middlewares/auth')
 
 router.get('/', async (req, res) => {
-    const blogs = await Blog.findAll()
+    const blogs = await Blog.findAll({
+        attributes: {
+            exclude: ['userId']
+        }
+    })
     res.json(blogs)
 })
 
@@ -16,18 +21,25 @@ router.get('/:id', blogFinder, async (req, res) => {
     res.json(req.blog)
 })
 
-router.post('/', async (req, res) => {
+router.post('/', tokenExtractor, async (req, res) => {
     if ((typeof req.body.url !== 'string') || (req.body.author && typeof req.body.author !== 'string') || (req.body.title && typeof req.body.title !== 'string') || (req.body.likes && typeof req.body.likes !== 'number')) {
         throw new PostBlogTypeValidatorError('Check the JSON payload, one of the fields has invalid data type')
     }
-    const blog = await Blog.create(req.body)
+    const user = await User.findByPk(req.decodedToken.id)
+    if (!user) {
+        return res.status(400).json({ error: "invalid token, user not found for given token" })
+    }
+    const blog = await Blog.create({ ...req.body, userId: user.id })
     return res.json(blog)
 })
 
-router.put('/:id', blogFinder, async (req, res) => {
+router.put('/:id', tokenExtractor, blogFinder, async (req, res) => {
     if (!req.blog) {
         res.statusCode = 404
         return res.end()
+    }
+    if (req.blog.userId !== req.decodedToken.id) {
+        return res.status(401).end()
     }
     if ((req.body.url && typeof req.body.url !== 'string') || (req.body.author && typeof req.body.author !== 'string') || (req.body.title && typeof req.body.title !== 'string') || (req.body.likes && typeof req.body.likes !== 'number')) {
         throw new PostBlogTypeValidatorError('Check the JSON payload, one of the fields has invalid data type')
@@ -48,10 +60,13 @@ router.put('/:id', blogFinder, async (req, res) => {
     res.json(req.blog)
 })
 
-router.delete('/:id', blogFinder, async (req, res) => {
+router.delete('/:id', tokenExtractor, blogFinder, async (req, res) => {
     if (!req.blog) {
         res.statusCode = 404
         return res.end()
+    }
+    if (req.blog.userId !== req.decodedToken.id) {
+        return res.status(401).end()
     }
     await req.blog.destroy()
     res.statusCode = 204

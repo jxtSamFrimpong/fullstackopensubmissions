@@ -5,6 +5,14 @@ class PostBlogTypeValidatorError extends Error {
     }
 }
 
+class PasswordError extends Error {
+    constructor(message) {
+        super(message);
+        this.name = 'PasswordValidationError';
+    }
+}
+
 module.exports = {
-    PostBlogTypeValidatorError
+    PostBlogTypeValidatorError,
+    PasswordError
 }
