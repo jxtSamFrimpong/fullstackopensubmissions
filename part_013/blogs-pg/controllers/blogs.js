@@ -3,8 +3,18 @@ const { Blog, User } = require('../models')
 const blogFinder = require('../middlewares/blogFinder')
 const { PostBlogTypeValidatorError } = require('../middlewares/typeValidators')
 const { tokenExtractor } = require('../middlewares/auth')
+const { Op } = require('sequelize')
 
 router.get('/', async (req, res) => {
+    let whereConditions = {}
+    if (req.query.search) {
+        whereConditions = {
+            [Op.or]: [
+                { title: { [Op.iLike]: `%${req.query.search}%` } },
+                { author: { [Op.iLike]: `%${req.query.search}%` } }
+            ]
+        }
+    }
     const blogs = await Blog.findAll({
         attributes: {
             exclude: ['userId']
@@ -12,7 +22,12 @@ router.get('/', async (req, res) => {
         include: {
             model: User,
             attributes: ['name']
-        }
+        },
+        where: whereConditions,
+        order: [
+            ['likes', 'DESC'],
+            ['title', 'ASC']
+        ]
     })
     res.json(blogs)
 })
