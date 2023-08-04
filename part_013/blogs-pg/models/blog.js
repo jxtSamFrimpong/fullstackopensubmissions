@@ -21,11 +21,22 @@ Blog.init({
     likes: {
         type: DataTypes.INTEGER,
         defaultValue: 0
+    },
+    year: {
+        type: DataTypes.INTEGER,
+        allowNull: true,
+        validate: {
+            customValidator(value) {
+                if (value === undefined || value === null || value < 1991 || value > new Date().getFullYear()) {
+                    throw new Error(`year can't be null, less than 1991, or greater than current year ${new Date().getFullYear()}`);
+                }
+            }
+        }
     }
 }, {
     sequelize,
     underscored: true,
-    timestamps: false,
+    timestamps: true,
     modelName: 'blog'
 })
 
