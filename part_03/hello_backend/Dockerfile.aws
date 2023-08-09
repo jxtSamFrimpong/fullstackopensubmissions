@@ -1,0 +1,13 @@
+FROM node:18.15.0
+COPY . /app
+
+WORKDIR /app
+
+RUN npm install
+
+ENV NODE_ENV="test"
+ENV TEST_MONGODB_URI=""
+ENV MONGODB_URI=""
+ENV PORT=3001
+
+ENTRYPOINT [ "npm", "run", "start:test" ]
