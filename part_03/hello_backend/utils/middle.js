@@ -23,7 +23,7 @@ const errorHandler = (error, request, response, next) => {
         })
     }
     else {
-        response.static(500).end();
+        response.status(500).end();
     }
 
     next(error)
