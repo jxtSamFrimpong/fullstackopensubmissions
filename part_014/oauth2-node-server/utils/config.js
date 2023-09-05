@@ -1,0 +1,15 @@
+require('dotenv').config();
+
+const GITHUB_CLIENT_ID = process.env.GITHUB_CLIENT_ID;
+const GITHUB_CLIENT_SECRET = process.env.GITHUB_CLIENT_SECRET;
+const GITHUB_URL = process.env.GITHUB_URL;
+const GITHUB_USER_IDENTITY_URL = process.env.GITHUB_USER_IDENTITY_URL;
+const GITHUB_USER_API_URL = process.env.GITHUB_USER_API_URL;
+
+module.exports = {
+    GITHUB_CLIENT_ID,
+    GITHUB_CLIENT_SECRET,
+    GITHUB_URL,
+    GITHUB_USER_IDENTITY_URL,
+    GITHUB_USER_API_URL
+}
